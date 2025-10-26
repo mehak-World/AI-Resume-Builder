@@ -39,8 +39,6 @@ const Skills = ({data, setData}) => {
             </button>)}
         </div>
     
-
-      <button className = "bg-gradient-to-r from-green-100 to-green-200 text-green-700 cursor-pointer p-2 rounded-lg border border-green-400 text-sm mt-3">Save Changes</button>
     </div>
   )
 }

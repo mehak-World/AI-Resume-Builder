@@ -68,7 +68,7 @@ const PersonalInfo = ({ data, setData }) => {
         description="Enter your personal details below."
       />
 
-      <form className="flex flex-col gap-4 p-4">
+      <form content-type = "multipart/form-data" className="flex flex-col gap-4 p-4">
         {/* Profile Image Upload */}
         <div className="mb-3 flex flex-col gap-2">
           {!profileImage ? (
@@ -136,12 +136,7 @@ const PersonalInfo = ({ data, setData }) => {
           );
         })}
 
-        <button
-          type="button"
-          className="bg-gradient-to-r from-green-100 to-green-200 text-green-700 font-medium cursor-pointer p-2 rounded-lg border border-green-400 md:w-[30%] hover:from-green-200 hover:to-green-300 transition-all"
-        >
-          Save Changes
-        </button>
+      
       </form>
     </div>
   );

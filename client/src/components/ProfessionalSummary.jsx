@@ -19,7 +19,7 @@ const ProfessionalSummary = ({data, setData}) => {
             {data.summary}
         </textarea>
 
-        <button className = "bg-gradient-to-r from-green-100 to-green-200 text-green-700 cursor-pointer p-2 rounded-lg border border-green-400 text-sm">Save Changes</button>
+       
     </div>
   )
 }

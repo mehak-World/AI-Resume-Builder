@@ -1,5 +1,5 @@
 import { ArrowDownLeftFromSquare, ArrowLeft, BookTemplate, DownloadCloud, EyeIcon, Folder, LayoutTemplateIcon, MoveLeft, MoveRight, Share2Icon, View, ViewIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import PersonalInfo from "../components/PersonalInfo";
 import ProfessionalSummary from "../components/ProfessionalSummary";
@@ -11,8 +11,31 @@ import Skills from "../components/Skills";
 import MinimalTemplate from "../assets/templates/MinimalTemplate";
 import ModernTemplate from "../assets/templates/ModernTemplate";
 import MinimalImageTemplate from "../assets/templates/MinimalImageTemplate";
+import { useUser } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios"
+import { useParams } from "react-router-dom";
+
 
 const ResumeBuilder = () => {
+
+  const navigate = useNavigate();
+  const { isSignedIn, user } = useUser();
+  console.log(user);
+  const {resume_id} = useParams();
+
+
+  useEffect(() => {
+    if (!isSignedIn) {
+      navigate("/login");
+    }
+  }, []);
+
+ 
+  console.log(isSignedIn);
+  console.log(user)
+
+  // I want to know if user is signed in or not
   const [formData, setFormData] = useState({
     personalInfo: {
       full_name: "",
@@ -22,16 +45,28 @@ const ResumeBuilder = () => {
       linkedin: "",
       website: "",
       profession: "",
-      image: "",
+      image: ""
     },
     title: "",
     summary: "",
     education: [],
     experiences: [],
-    public: "",
+    public: false,
     skills: [],
-    projects: []
+    projects: [],
+    template: "Classic",
+    accent: "black"
   });
+
+
+
+  
+    const saveData = async () => {
+      const res = await axios.post(`http://localhost:3000/${user.id}/resumes/${resume_id}`, {data:formData})
+      console.log(res.data);
+    }
+
+
 
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -123,15 +158,15 @@ const ResumeBuilder = () => {
 
           {/* Display all sections */}
           <div className = "p-4">
-             {activeIndex == 0 && <PersonalInfo data = {formData} setData = {setFormData}/>}
-             {activeIndex == 1 && <ProfessionalSummary data = {formData} setData = {setFormData}/>}
-             {activeIndex == 2 && <ProfessionalExperience data = {formData} setData = {setFormData}/>}
-             {activeIndex == 3 && <Education data = {formData} setData = {setFormData}/>}
-             {activeIndex == 4 && <Projects data = {formData} setData = {setFormData}/>}
-             {activeIndex == 5 && <Skills data = {formData} setData = {setFormData}/>}
+             {activeIndex == 0 && <PersonalInfo data = {formData} setData = {setFormData} saveData = {saveData}/>}
+             {activeIndex == 1 && <ProfessionalSummary data = {formData} setData = {setFormData} saveData = {saveData}/>}
+             {activeIndex == 2 && <ProfessionalExperience data = {formData} setData = {setFormData} saveData = {saveData}/>}
+             {activeIndex == 3 && <Education data = {formData} setData = {setFormData} saveData = {saveData}/>}
+             {activeIndex == 4 && <Projects data = {formData} setData = {setFormData} saveData = {saveData}/>}
+             {activeIndex == 5 && <Skills data = {formData} setData = {setFormData} saveData = {saveData}/>}
           </div>
            
-
+            <button onClick = {() => saveData()} className = "bg-gradient-to-r m-4 from-green-100 to-green-200 text-green-700 cursor-pointer p-2 rounded-lg border border-green-400 text-sm mt-4">Save Changes</button>
           </div>
         </div>
 

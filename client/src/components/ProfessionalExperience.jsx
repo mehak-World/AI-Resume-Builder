@@ -3,7 +3,7 @@ import SectionHeading from "./SectionHeading";
 import { PlusIcon } from "lucide-react";
 import ExperienceForm from "./ExperienceForm";
 
-const ProfessionalExperience = ({ data, setData }) => {
+const ProfessionalExperience = ({ data, setData}) => {
   const blankExperience = {
     company: "",
     position: "",
@@ -65,7 +65,7 @@ const ProfessionalExperience = ({ data, setData }) => {
           />
         ))
       )}
-       <button className = "bg-gradient-to-r from-green-100 to-green-200 text-green-700 cursor-pointer p-2 rounded-lg border border-green-400 text-sm mt-3">Save Changes</button>
+     
     </div>
   );
 };
