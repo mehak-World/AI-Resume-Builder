@@ -40,7 +40,7 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                 </div>
 
                 {/* Left Sidebar */}
-                <aside className="col-span-1 border-r border-zinc-400 p-6 pt-0">
+                <aside className="col-span-1 border-r border-zinc-400 p-2 pt-0">
 
 
                     {/* Contact */}

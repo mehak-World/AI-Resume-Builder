@@ -9,23 +9,22 @@ const resumeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    summary: String,
+    summary: {type: String, default: ''},
     personalInfo: {
       full_name: {
         type: String,
+        default: ""
       },
       email: {
          type: String,
+         default: "",
       },
-      phone: String,
-      location: String,
-      linkedin: String,
-      website: String,
-      profession: String,
-      image: {
-        filename: String,
-        url: String
-      }
+      phone: {type: String, default: ''},
+      location: {type: String, default: ''},
+      linkedin: {type: String, default: ''},
+      website: {type: String, default: ''},
+      profession: {type: String, default: ''},
+      image: {type: String, default: ''}
     },
     education: [
         {
@@ -33,7 +32,7 @@ const resumeSchema = new mongoose.Schema({
              ref: "Education"
         }
     ],
-    experience: [
+    experiences: [
         {
              type: mongoose.Schema.Types.ObjectId,
              ref: "Experience"
@@ -48,9 +47,9 @@ const resumeSchema = new mongoose.Schema({
     skills: [{type: String}],
     template: {
         type: String,
-        enum: ["Classic", "Minimal", "Modern", "Minimal Image"]
+        default: "Classic"
     },
-    color: String,
+    accent: {type: String, default: "black"},
     public: {
         type: Boolean,
         default: false
@@ -61,6 +60,5 @@ const resumeSchema = new mongoose.Schema({
     }
 })
    
-
 module.exports  = mongoose.model("Resume", resumeSchema)
 

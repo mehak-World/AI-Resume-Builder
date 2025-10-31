@@ -91,11 +91,18 @@ const PersonalInfo = ({ data, setData }) => {
           ) : (
             <div className="flex items-center gap-3">
               {/* Image preview */}
-              <img
-                src={URL.createObjectURL(profileImage)}
+             {!(profileImage instanceof File) ? <img
+                src={profileImage}
                 alt="Profile"
                 className="w-16 h-16 rounded-full object-cover border border-gray-300"
+              /> : 
+              <img 
+              src = {URL.createObjectURL(profileImage)} 
+               alt="Profile"
+                className="w-16 h-16 rounded-full object-cover border border-gray-300"
               />
+              }
+              
               <div className="flex flex-col">
                 <p className="text-gray-700">{profileImage.name}</p>
                 <button

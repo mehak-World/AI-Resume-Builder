@@ -30,3 +30,9 @@ export const colorOptions = [
       light: "from-amber-100 to-orange-200",
     },
   ];
+
+   export const colorPallete = [
+      "#3B82F6", "#6466f1", "#8b5cf6", "#0eb981", "#f97316", "#17b8a6", "#6b7280", "black"
+    ]
+
+  export const tempOptions = ["Classic", "Modern", "Minimal Image", "Minimal"]

@@ -41,7 +41,7 @@ const Dashboard = () => {
   const deleteResume = async (id) => {
     // Remove the resume from the db
      const response = await axios.post(
-      `http://localhost:3000/${user.id}/resumes/${id}/delete`
+      `http://localhost:3000/resumes/${user.id}/${id}/delete`
     );
     // If resume successfully deleted from the database, then update the UI
     if(response){
@@ -54,7 +54,7 @@ const Dashboard = () => {
   const editResume = async (e) => {
      e.preventDefault();
     const response = await axios.post(
-      `http://localhost:3000/${user.id}/resumes/${editResumeId}`,
+      `http://localhost:3000/resumes/${user.id}/${editResumeId}`,
       { data: {title} }
     );
 
@@ -76,7 +76,7 @@ const Dashboard = () => {
   const createResume = async (e) => {
     e.preventDefault();
     const response = await axios.post(
-      `http://localhost:3000/${user.id}/resumes`,
+      `http://localhost:3000/resumes/${user.id}`,
       { title }
     );
     const new_resume = response?.data;

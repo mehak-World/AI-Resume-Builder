@@ -11,7 +11,9 @@ const useGetAllResumes = (userId) => {
       if (!userId) return;
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:3000/${userId}/resumes`);
+        console.log(userId);
+        const response = await axios.get(`http://localhost:3000/resumes/${userId}`);
+        console.log(response);
         setAllResumes(response.data || []);
       } catch (err) {
         console.error("Error fetching resumes:", err);

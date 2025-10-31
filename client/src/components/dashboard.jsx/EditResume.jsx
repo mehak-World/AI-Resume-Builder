@@ -1,14 +1,14 @@
 import React from 'react'
 import { CircleXIcon } from 'lucide-react'
 
-const EditResume = ({setCreateResumeOpen, setTitle, editResume, title}) => {
+const EditResume = ({setShowEditResumeForm, setTitle, editResume, title}) => {
   return (
      <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
           {/* Modal container */}
           <div className="relative bg-white text-gray-600 max-w-md w-full mx-4 p-6 rounded-2xl shadow-xl animate-fadeIn">
             {/* Close Icon */}
             <button
-              onClick={() => setCreateResumeOpen(false)}
+              onClick={() => setShowEditResumeForm(false)}
               className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition"
             >
               <CircleXIcon className="w-5 h-5" />
