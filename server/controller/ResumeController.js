@@ -2,7 +2,6 @@ const Resume = require("../models/Resume");
 const Education = require("../models/Education");
 const Experience = require("../models/Experience");
 const Project = require("../models/Project");
-const puppeteer = require('puppeteer');
 const fs = require('fs');
 const client = require("../config/imageKit")
 
@@ -38,81 +37,77 @@ const updateResume = async (req, res) => {
     const data = JSON.parse(req.body.data);
     const { resume_id } = req.params;
     const image = req.file;
-    const pathname = image.path;
-    console.log(pathname)
-    
-   
-    
-    
 
-    let resume = await Resume.findByIdAndUpdate(
-      resume_id,
-      {
-        personalInfo: {...data.personalInfo, image: ''},
-        summary: data.summary,
-        skills: data.skills,
-        template: data.template,
-        public: data.public,
-        accent: data.accent,
-        updatedAt: Date.now(),
-        
-      },
-      { new: true }
-    );
-
-     if(image){
-      const response = await client.files.upload({ file: fs.createReadStream(pathname), fileName: 'myresume.png', folder: 'user-resumes', transformation: {
-      pre: 'w-300, h-300. fo-face, z-0.75' 
-    } });
-
-    resume.personalInfo.image = response.url;
-    }
-
+    // Fetch resume first
+    let resume = await Resume.findById(resume_id);
     if (!resume) return res.status(404).json({ message: "Resume not found" });
 
-    // Delete old refs
+    let newImageURL = resume.personalInfo.image; // keep old image by default
+
+    // If a new image was uploaded, upload to ImageKit first
+    if (image) {
+      const pathname = image.path;
+
+      const response = await client.files.upload({
+        file: fs.createReadStream(pathname),
+        fileName: `resume-${Date.now()}.png`,
+        folder: "user-resumes",
+        transformation: { pre: "w-300, h-300, fo-face, z-0.75" },
+      });
+
+      newImageURL = response.url;
+
+      fs.unlink(pathname, (err) =>
+        err && console.error("Temp file delete error:", err)
+      );
+    }
+
+    // Update main fields
+    resume.personalInfo = { ...data.personalInfo, image: newImageURL };
+    resume.summary = data.summary;
+    resume.skills = data.skills;
+    resume.template = data.template;
+    resume.public = data.public;
+    resume.accent = data.accent;
+    resume.updatedAt = Date.now();
+
+    // Delete old subdocs (AFTER image upload succeeded)
     await Education.deleteMany({ _id: { $in: resume.education } });
     await Experience.deleteMany({ _id: { $in: resume.experiences } });
     await Project.deleteMany({ _id: { $in: resume.projects } });
 
-    // Clear arrays
+    // Reset arrays
     resume.education = [];
     resume.experiences = [];
     resume.projects = [];
 
-    // Recreate subdocs
+    // Recreate new ones
     for (let edu of data.education) {
-      const newEdu = new Education(edu);
-      await newEdu.save();
+      const newEdu = await new Education(edu).save();
       resume.education.push(newEdu._id);
     }
 
     for (let exp of data.experiences) {
-      const newExp = new Experience(exp);
-      await newExp.save();
+      const newExp = await new Experience(exp).save();
       resume.experiences.push(newExp._id);
     }
 
     for (let proj of data.projects) {
-      const newProj = new Project(proj);
-      await newProj.save();
+      const newProj = await new Project(proj).save();
       resume.projects.push(newProj._id);
     }
 
     await resume.save();
 
-    console.log(resume)
-
     const populatedResume = await Resume.findById(resume._id)
-      .populate('education')
-      .populate('experiences')
-      .populate('projects');
+      .populate("education")
+      .populate("experiences")
+      .populate("projects");
 
     res.status(200).json({
       message: "Successfully updated",
       resume: populatedResume,
     });
-
   } catch (err) {
     console.error("Error updating resume:", err);
     res.status(400).json({ message: "Error updating the resume", error: err.message });
@@ -146,40 +141,5 @@ const getResumeById = async (req, res) => {
     }
 }
 
-const getPdf = async (req, res) => {
-  const {  resume_id } = req.params;
 
-  // You can either:
-  // 1) Have your frontend page (http://localhost:5173/view/{resumeId}) render publicly when accessed
-  // 2) Or build server-side HTML from DB and set page.setContent(html) — this is preferred for auth-free generation
-
-  try {
-    const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
-    const page = await browser.newPage();
-
-    // Option A: navigate to your client preview route (if accessible to server)
-    const url = `http://localhost:5173/view/${resume_id}`;
-    await page.goto(url, { waitUntil: "networkidle2" });
-
-    // Make sure print background is enabled
-    const pdfBuffer = await page.pdf({
-      format: "A3",
-      printBackground: true,
-      margin: { top: "10mm", bottom: "10mm", left: "10mm", right: "10mm" },
-    });
-
-    console.log("Buffer = " , pdfBuffer)
-    await browser.close();
-
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", `attachment; filename=resume-${resume_id}.pdf`);
-    return res.send(pdfBuffer);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "PDF generation failed" });
-  }
-}
-
-module.exports = { createResume, updateResume, getAllResumes, deleteResume, getResumeById, getPdf };
+module.exports = { createResume, updateResume, getAllResumes, deleteResume, getResumeById };

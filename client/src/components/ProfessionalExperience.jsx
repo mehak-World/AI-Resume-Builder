@@ -1,4 +1,3 @@
-import React from "react";
 import SectionHeading from "./SectionHeading";
 import { PlusIcon } from "lucide-react";
 import ExperienceForm from "./ExperienceForm";

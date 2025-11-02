@@ -1,20 +1,13 @@
 import {
-  ArrowDownLeftFromSquare,
   ArrowLeft,
-  BookTemplate,
-  DownloadCloud,
   EyeClosed,
-  EyeClosedIcon,
   EyeIcon,
-  Folder,
-  LayoutTemplateIcon,
   MoveLeft,
   MoveRight,
   Share2Icon,
-  View,
-  ViewIcon,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { sections } from "../../utils.js/constants";
 import { Link } from "react-router-dom";
 import PersonalInfo from "../components/PersonalInfo";
 import ProfessionalSummary from "../components/ProfessionalSummary";
@@ -33,13 +26,14 @@ import { useParams } from "react-router-dom";
 import { tempOptions, colorPallete } from "../../utils.js/constants";
 import SuccessAlert from "../components/SuccessAlert";
 import ErrorAlert from "../components/ErrorAlert";
+import TemplateSelector from "../components/ResumeBuilder/TemplateSelector";
+import ColorSelector from "../components/ResumeBuilder/ColorSelector";
 
 const ResumeBuilder = () => {
   const navigate = useNavigate();
   const { isSignedIn, isLoaded, user } = useUser();
-  console.log(user);
   const { resumeId } = useParams();
-  console.log(resumeId);
+  const url = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     if (!isLoaded) return; //wait for the clerk to finish loading
@@ -48,8 +42,6 @@ const ResumeBuilder = () => {
     }
   }, [isLoaded, isSignedIn, navigate]);
 
-  console.log(isSignedIn);
-  console.log(user);
 
   // I want to know if user is signed in or not
   const [formData, setFormData] = useState({
@@ -111,7 +103,7 @@ const ResumeBuilder = () => {
       }
 
       const res = await axios.post(
-        `http://localhost:3000/resumes/${user.id}/${resumeId}`,
+        `${url}/resumes/${user.id}/${resumeId}`,
         fd,
         {
           headers: 
@@ -131,14 +123,6 @@ const ResumeBuilder = () => {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const sections = [
-    "Personal information",
-    "Professional Summary",
-    "Professional Experience",
-    "Education",
-    "Projects",
-    "Skills",
-  ];
 
   // Template index local state variable
   const [tempIndex, setTempIndex] = useState(0);
@@ -146,7 +130,7 @@ const ResumeBuilder = () => {
   const [showColorMenu, setShowColorMenu] = useState(false);
   const [colorIdx, setColorIdx] = useState(colorPallete.length - 1);
 
-  console.log(formData);
+
 
   return (
     <div className="max-w-7xl mx-auto p-8">
@@ -168,6 +152,7 @@ const ResumeBuilder = () => {
           </div>
         )}
       </div>
+
       <div className="flex gap-10 flex-col lg:flex-row">
         {/* Builder left section */}
 
@@ -196,64 +181,8 @@ const ResumeBuilder = () => {
             {/* Buttons to change the template and accent, nav buttons */}
             <div className="flex flex-col sm:flex-row justify-between p-3 items-center">
               <div className="transition-all duration-300 flex gap-2 items-center">
-                <div className="relative">
-                  <button
-                    onClick={() => {
-                      setShowTempMenu(!showTempMenu);
-                    }}
-                    className="cursor-pointer flex gap-2 bg-blue-100 items-center p-2 rounded-lg text-blue-700 text-sm"
-                  >
-                    {" "}
-                    <LayoutTemplateIcon size={16} /> <p>Template</p>
-                  </button>
-                  {showTempMenu && (
-                    <div className="absolute bg-white">
-                      {tempOptions.map((temp_option, idx) => (
-                        <div
-                          onClick={() => {
-                            setTempIndex(idx);
-                            setShowTempMenu(false);
-                            setFormData((prev) => ({
-                              ...prev,
-                              template: tempOptions[idx],
-                            }));
-                          }}
-                          className="cursor-pointer p-3 bg-blue-100 rounded-lg m-2 hover:bg-blue-300"
-                        >
-                          {temp_option}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <button
-                    onClick={() => setShowColorMenu(true)}
-                    className="flex gap-2 bg-pink-100 items-center p-2 rounded-lg text-pink-700 text-sm"
-                  >
-                    {" "}
-                    <LayoutTemplateIcon size={16} /> <p>Accent</p>
-                  </button>
-                  {showColorMenu && (
-                    <div className="absolute flex gap-2 flex-wrap bg-white max-w-[200px]">
-                      {colorPallete.map((color, idx) => (
-                        <div
-                          onClick={() => {
-                            setColorIdx(idx);
-                            setShowColorMenu(false);
-                            setFormData((prev) => ({
-                              ...prev,
-                              accent: colorPallete[idx],
-                            }));
-                          }}
-                          className={`rounded-full cursor-pointer p-3 h-10 w-10 m-2 hover:bg-blue-300`}
-                          style={{ backgroundColor: color }}
-                        ></div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <TemplateSelector showTempMenu={showTempMenu} setShowTempMenu = {setShowTempMenu} setTempIndex={setTempIndex} setFormData={setFormData} />
+                <ColorSelector setShowColorMenu={setShowColorMenu} showColorMenu={showColorMenu} setColorIdx={setColorIdx} setFormData={setFormData} />
               </div>
 
               {/* Buttons for navigation */}

@@ -1,7 +1,17 @@
-import React from "react";
+import React, {useState} from "react";
 import { Calendar1Icon, TrashIcon } from "lucide-react";
+import { StarIcon, Loader } from "lucide-react";
+import axios from "axios";
+import { useUser } from "@clerk/clerk-react";
+import {useParams} from "react-router-dom"
 
 const ExperienceForm = ({ experience, index, onChange, onDelete }) => {
+
+  console.log(experience)
+  const {user} = useUser();
+  const {resumeId} = useParams();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (field, value) => {
     let updatedExp = { ...experience };
@@ -23,6 +33,14 @@ const ExperienceForm = ({ experience, index, onChange, onDelete }) => {
 
     onChange(index, updatedExp);
   };
+
+  const enhanceJobDesc = async (req, res) => {
+    setIsLoading(true)
+    const response = await axios.post(`http://localhost:3000/ai/${user.id}/${resumeId}/enhanceJobDesc`, {experienceId: experience._id, jobDescription: experience.jobDescription})
+    if(response){
+       handleChange("jobDescription", response.data)}
+       setIsLoading(false);
+    }
 
   return (
     <div className="border border-gray-300 p-3 rounded-lg text-sm mb-3">
@@ -112,7 +130,11 @@ const ExperienceForm = ({ experience, index, onChange, onDelete }) => {
 
       {/* Job Description */}
       <div className="flex flex-col gap-2">
-        <label>Job Description</label>
+        <div className = "flex justify-between items-center text-sm">
+            <label>Job Description</label>
+             <button onClick = {enhanceJobDesc} className = "bg-green-100 hover:bg-green-200 cursor-pointer text-green-800 p-2 rounded-lg text-sm gap-3 flex items-center">{!isLoading ? <StarIcon />: <Loader />}{isLoading ? "Generating Content..." : "AI Enhance"}</button>
+        </div>
+      
         <textarea
           value={experience.jobDescription}
           onChange={(e) => handleChange("jobDescription", e.target.value)}
@@ -123,6 +145,6 @@ const ExperienceForm = ({ experience, index, onChange, onDelete }) => {
       </div>
     </div>
   );
-};
+}
 
 export default ExperienceForm;

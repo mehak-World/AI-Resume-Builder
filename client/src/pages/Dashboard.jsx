@@ -20,10 +20,11 @@ import ExistingResume from "../components/dashboard.jsx/ExistingResume";
 import EditResume from "../components/dashboard.jsx/EditResume";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   const { isSignedIn, user } = useUser();
-  const { allResumes, setAllResumes, loading, error } = useGetAllResumes(user?.id);
-    
+  const { allResumes, setAllResumes, loading, error } = useGetAllResumes(
+    user?.id
+  );
+
   // State variables
   const [createResumeOpen, setCreateResumeOpen] = useState(false);
   const [existingResumeOpen, setExistingResumeOpen] = useState(false);
@@ -31,52 +32,48 @@ const Dashboard = () => {
   const [resume, setResume] = useState(null);
   const [title, setTitle] = useState("");
   const [editResumeId, setEditResumeId] = useState("");
+  const url = import.meta.env.VITE_BACKEND_URL;
 
   if (!isSignedIn) {
     return <RedirectToSignIn />;
   }
 
-
   // Delete resume
   const deleteResume = async (id) => {
     // Remove the resume from the db
-     const response = await axios.post(
-      `http://localhost:3000/resumes/${user.id}/${id}/delete`
+    const response = await axios.post(
+      `${url}/resumes/${user.id}/${id}/delete`
     );
     // If resume successfully deleted from the database, then update the UI
-    if(response){
+    if (response) {
       setAllResumes(allResumes.filter((resume) => resume._id !== id));
     }
-    
   };
 
   // Edit resume
   const editResume = async (e) => {
-     e.preventDefault();
+    e.preventDefault();
     const response = await axios.post(
-      `http://localhost:3000/resumes/${user.id}/${editResumeId}`,
-      { data: {title} }
+      `${url}/resumes/${user.id}/${editResumeId}`,
+      { data: { title } }
     );
 
-     const new_resume = response?.data;
+    const new_resume = response?.data;
     console.log(new_resume);
 
-   setAllResumes((prev) =>
-  prev.map((resume) =>
-    resume._id === editResumeId ? new_resume : resume
-  )
-);
-
+    setAllResumes((prev) =>
+      prev.map((resume) => (resume._id === editResumeId ? new_resume : resume))
+    );
 
     setTitle(""); // optional: clear input
     setShowEditResumeForm(false);
-  }
+  };
 
   // Function to create resume
   const createResume = async (e) => {
     e.preventDefault();
     const response = await axios.post(
-      `http://localhost:3000/resumes/${user.id}`,
+      `${url}/resumes/${user.id}`,
       { title }
     );
     const new_resume = response?.data;
@@ -87,8 +84,6 @@ const Dashboard = () => {
     setTitle(""); // optional: clear input
     setCreateResumeOpen(false);
   };
-
-
 
   return (
     <div className="relative min-h-screen bg-gray-100">
@@ -124,7 +119,12 @@ const Dashboard = () => {
         <hr />
       </div>
 
-     {allResumes.length == 0 && <div className = "text-gray-700 text-italic m-4"> There are no resumes </div>}
+      {allResumes.length == 0 && (
+        <div className="text-gray-700 text-italic m-4">
+          {" "}
+          There are no resumes{" "}
+        </div>
+      )}
 
       {/* Render all resumes */}
       <div className="flex gap-4 m-5 flex-wrap">
@@ -132,22 +132,47 @@ const Dashboard = () => {
           const color =
             colorOptions[Math.floor(Math.random() * colorOptions.length)];
           return (
-           <Resume key = {resume._id} resume = {resume} color = {color} deleteResume={deleteResume} setShowEditResumeForm={setShowEditResumeForm} setEditResumeId={setEditResumeId}/>
+            <Resume
+              key={resume._id}
+              resume={resume}
+              color={color}
+              deleteResume={deleteResume}
+              setShowEditResumeForm={setShowEditResumeForm}
+              setEditResumeId={setEditResumeId}
+            />
           );
         })}
       </div>
 
-        {/* Create Resume modal */}
+      {/* Create Resume modal */}
       {createResumeOpen && (
-        <CreateResume setTitle={setTitle} title = {title} setCreateResumeOpen= {setCreateResumeOpen} createResume = {createResume}  />
+        <CreateResume
+          setTitle={setTitle}
+          title={title}
+          setCreateResumeOpen={setCreateResumeOpen}
+          createResume={createResume}
+        />
       )}
 
+      {/* Existing Resume modal */}
       {existingResumeOpen && (
-       <ExistingResume setExistingResumeOpen={setExistingResumeOpen} setResume={setResume} />
+        <ExistingResume
+          setExistingResumeOpen={setExistingResumeOpen}
+          resumes={allResumes}
+          setAllResumes={setAllResumes}
+          resume={resume}
+          setResume={setResume}
+        />
       )}
 
+      {/* Edit Resume model */}
       {showEditResumeForm && (
-       <EditResume setTitle={setTitle} title = {title} setShowEditResumeForm={setShowEditResumeForm} editResume={editResume} />
+        <EditResume
+          setTitle={setTitle}
+          title={title}
+          setShowEditResumeForm={setShowEditResumeForm}
+          editResume={editResume}
+        />
       )}
     </div>
   );

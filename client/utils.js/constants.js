@@ -36,3 +36,12 @@ export const colorOptions = [
     ]
 
   export const tempOptions = ["Classic", "Modern", "Minimal Image", "Minimal"]
+
+  export const sections = [
+      "Personal information",
+      "Professional Summary",
+      "Professional Experience",
+      "Education",
+      "Projects",
+      "Skills",
+    ];

@@ -3,8 +3,8 @@ const app = express();
 require("dotenv").config();
 const mongoose = require("mongoose");
 const cors = require("cors");
-const ResumeRouter = require("./routes/Resume.js")
-
+const ResumeRouter = require("./routes/Resume.js");
+const aiRouter = require("./routes/AI.js");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -26,6 +26,7 @@ async function main() {
 }
 
 app.use("/resumes", ResumeRouter )
+app.use("/ai", aiRouter)
 
 
 app.listen(process.env.PORT, () => {

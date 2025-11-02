@@ -5,6 +5,7 @@ const useGetAllResumes = (userId) => {
   const [allResumes, setAllResumes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const url = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
     const fetchResumes = async () => {
@@ -12,7 +13,7 @@ const useGetAllResumes = (userId) => {
       setLoading(true);
       try {
         console.log(userId);
-        const response = await axios.get(`http://localhost:3000/resumes/${userId}`);
+        const response = await axios.get(`${url}/resumes/${userId}`);
         console.log(response);
         setAllResumes(response.data || []);
       } catch (err) {

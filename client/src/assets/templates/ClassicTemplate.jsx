@@ -17,10 +17,7 @@ const ClassicTemplate = ({ data, accentColor }) => {
         className="text-center mb-8 pb-6 border-b-2"
         style={{ borderColor: accentColor }}
       >
-        <h1
-          className="text-3xl font-bold mb-2"
-          style={{ color: accentColor }}
-        >
+        <h1 className="text-3xl font-bold mb-2" style={{ color: accentColor }}>
           {data.personalInfo?.full_name || "Your Name"}
         </h1>
         <p className="text-lg text-gray-700 mb-2">
@@ -101,7 +98,9 @@ const ClassicTemplate = ({ data, accentColor }) => {
                   <div className="text-right text-sm text-gray-600">
                     <p>
                       {formatDate(exp.startDate)} -{" "}
-                      {exp.currentlyWorking ? "Present" : formatDate(exp.endDate)}
+                      {exp.currentlyWorking
+                        ? "Present"
+                        : formatDate(exp.endDate)}
                     </p>
                   </div>
                 </div>
@@ -151,30 +150,58 @@ const ClassicTemplate = ({ data, accentColor }) => {
         </section>
       )}
 
+      {/* Projects */}
       {data.projects && data.projects.length > 0 && (
-                        <section>
-                            <h2 className="text-sm uppercase tracking-widest font-semibold" style={{ color: accentColor }}>
-                                PROJECTS
-                            </h2>
-                            <div className="space-y-4">
-                                {data.projects.map((project, index) => (
-                                    <div key={index}>
-                                        <h3 className="text-md font-medium text-zinc-800 mt-3">{project.name}</h3>
-                                        <p className="text-sm mb-1" style={{ color: accentColor }} >
-                                            {project.type}
-                                        </p>
-                                        {project.description && (
-                                            <ul className="list-disc list-inside text-sm text-zinc-700  space-y-1">
-                                                {project.description.split("\n").map((line, i) => (
-                                                    <li key={i}>{line}</li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
+        <section className="mb-6">
+          <h2
+            className="text-xl font-semibold mb-4"
+            style={{ color: accentColor }}
+          >
+            PROJECTS
+          </h2>
+
+          <div className="space-y-4">
+            {data.projects.map((project, index) => (
+              <div
+                key={index}
+                className="border-l-4 pl-4"
+                style={{ borderColor: accentColor }}
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <div>
+                    <h3 className="font-semibold text-gray-900 text-md">
+                      {project.name}
+                    </h3>
+                    {project.type && (
+                      <p
+                        className="text-sm font-medium"
+                        style={{ color: accentColor }}
+                      >
+                        {project.type}
+                      </p>
                     )}
+                  </div>
+
+                  {/* Optional: show tech stack or date if added in future */}
+                  {project.date && (
+                    <p className="text-sm text-gray-600">
+                      {formatDate(project.date)}
+                    </p>
+                  )}
+                </div>
+
+                {project.description && (
+                  <ul className="list-disc list-inside text-gray-700 text-sm space-y-1 leading-relaxed">
+                    {project.description.split("\n").map((line, i) => (
+                      <li key={i}>{line}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Skills */}
       {data.skills && data.skills.length > 0 && (

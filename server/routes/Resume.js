@@ -20,8 +20,5 @@ router.post("/:user_id/:resume_id/delete", isAuthorized, deleteResume)
 router.get("/:user_id/:resume_id", isAuthorized, getResumeById)
 
 
-// Get pdf from the browser route
-router.get("/:user_id/:resume_id/pdf", getPdf)
-
 
 module.exports = router;

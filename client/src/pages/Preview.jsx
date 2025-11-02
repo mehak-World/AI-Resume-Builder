@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ClassicTemplate from '../assets/templates/ClassicTemplate';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -11,13 +11,14 @@ const Preview = () => {
   const { resume_id } = useParams();
   const { user } = useUser();
   const id = user?.id;
+  const url = import.meta.env.VITE_BACKEND_URL;
 
   const [resData, setResData] = useState({});
 
   useEffect(() => {
     const fetchResData = async () => {
       if (!id) return; // wait until user is loaded
-      const res = await axios.get(`http://localhost:3000/resumes/${id}/${resume_id}`);
+      const res = await axios.get(`${url}/resumes/${id}/${resume_id}`);
       if (res) {
         setResData(res.data);
       }
