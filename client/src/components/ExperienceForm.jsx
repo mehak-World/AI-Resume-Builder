@@ -8,6 +8,7 @@ import {useParams} from "react-router-dom"
 const ExperienceForm = ({ experience, index, onChange, onDelete }) => {
 
   console.log(experience)
+  const url = import.meta.env.VITE_BACKEND_URL;
   const {user} = useUser();
   const {resumeId} = useParams();
 
@@ -36,7 +37,7 @@ const ExperienceForm = ({ experience, index, onChange, onDelete }) => {
 
   const enhanceJobDesc = async (req, res) => {
     setIsLoading(true)
-    const response = await axios.post(`http://localhost:3000/ai/${user.id}/${resumeId}/enhanceJobDesc`, {experienceId: experience._id, jobDescription: experience.jobDescription})
+    const response = await axios.post(`${url}/ai/${user.id}/${resumeId}/enhanceJobDesc`, {experienceId: experience._id, jobDescription: experience.jobDescription})
     if(response){
        handleChange("jobDescription", response.data)}
        setIsLoading(false);

@@ -5,13 +5,13 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const ResumeRouter = require("./routes/Resume.js");
 const aiRouter = require("./routes/AI.js");
+const path = require("path")
 
 app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
 app.use(express.json());
 app.use(
-  cors({
-    origin: "http://localhost:5173",
-  })
+  cors()
 );
 
 // Database connection
@@ -27,6 +27,11 @@ async function main() {
 
 app.use("/resumes", ResumeRouter )
 app.use("/ai", aiRouter)
+
+// Serve React frontend for all other routes
+app.use((req, res) => {
+  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+});
 
 
 app.listen(process.env.PORT, () => {

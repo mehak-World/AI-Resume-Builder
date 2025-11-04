@@ -1,7 +1,27 @@
-import React from 'react'
+import {useEffect, useState} from 'react'
 import { CircleXIcon } from 'lucide-react'
+import axios from "axios"
+import { useUser } from '@clerk/clerk-react'
 
-const EditResume = ({setShowEditResumeForm, setTitle, editResume, title}) => {
+const EditResume = ({setShowEditResumeForm, setTitle, editResume, title, editResumeId}) => {
+
+  const url = import.meta.env.VITE_BACKEND_URL;
+  const {user} = useUser();
+  // const [resume, setResume] = useState({});
+
+  useEffect(() => {
+    const getResume = async () => {
+      const res = await axios.get(`${url}/resumes/${user.id}/${editResumeId}`)
+      if(res){
+        setTitle(res.data.title)
+      }
+    } 
+
+    getResume();
+      
+  }, [])
+
+
   return (
      <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
           {/* Modal container */}

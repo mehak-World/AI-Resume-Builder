@@ -42,7 +42,6 @@ const ResumeBuilder = () => {
     }
   }, [isLoaded, isSignedIn, navigate]);
 
-
   // I want to know if user is signed in or not
   const [formData, setFormData] = useState({
     personalInfo: {
@@ -72,9 +71,7 @@ const ResumeBuilder = () => {
 
   useEffect(() => {
     const getResumeData = async () => {
-      const response = await axios.get(
-        `http://localhost:3000/resumes/${user.id}/${resumeId}`
-      );
+      const response = await axios.get(`${url}/resumes/${user.id}/${resumeId}`);
       console.log(response.data);
       const temp = response.data.template;
       setTempIndex(tempOptions.indexOf(temp));
@@ -88,8 +85,15 @@ const ResumeBuilder = () => {
   }, [resumeId, user, isLoaded]);
 
   const handleShare = () => {
+    const { origin, pathname } = window.location;
+
+    // Remove "/app" from path if present
+    const base = pathname.startsWith("/app") ? origin : origin; // origin stays same
+
+    const shareUrl = `${origin.replace(/\/app$/, "")}/view/${resumeId}`;
+
     navigator.share({
-      url: "http://localhost:5173/view/" + resumeId,
+      url: shareUrl,
       text: "My Resume",
     });
   };
@@ -98,16 +102,15 @@ const ResumeBuilder = () => {
     try {
       const fd = new FormData();
       fd.append("data", JSON.stringify(formData));
-      if(formData.personalInfo.image instanceof File){
-        fd.append("image", formData.personalInfo.image)
+      if (formData.personalInfo.image instanceof File) {
+        fd.append("image", formData.personalInfo.image);
       }
 
       const res = await axios.post(
         `${url}/resumes/${user.id}/${resumeId}`,
         fd,
         {
-          headers: 
-            { "Content-Type": "multipart/form-data" },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
       console.log(res.data);
@@ -123,14 +126,11 @@ const ResumeBuilder = () => {
 
   const [activeIndex, setActiveIndex] = useState(0);
 
-
   // Template index local state variable
   const [tempIndex, setTempIndex] = useState(0);
   const [showTempMenu, setShowTempMenu] = useState(false);
   const [showColorMenu, setShowColorMenu] = useState(false);
   const [colorIdx, setColorIdx] = useState(colorPallete.length - 1);
-
-
 
   return (
     <div className="max-w-7xl mx-auto p-8">
@@ -181,8 +181,18 @@ const ResumeBuilder = () => {
             {/* Buttons to change the template and accent, nav buttons */}
             <div className="flex flex-col sm:flex-row justify-between p-3 items-center">
               <div className="transition-all duration-300 flex gap-2 items-center">
-                <TemplateSelector showTempMenu={showTempMenu} setShowTempMenu = {setShowTempMenu} setTempIndex={setTempIndex} setFormData={setFormData} />
-                <ColorSelector setShowColorMenu={setShowColorMenu} showColorMenu={showColorMenu} setColorIdx={setColorIdx} setFormData={setFormData} />
+                <TemplateSelector
+                  showTempMenu={showTempMenu}
+                  setShowTempMenu={setShowTempMenu}
+                  setTempIndex={setTempIndex}
+                  setFormData={setFormData}
+                />
+                <ColorSelector
+                  setShowColorMenu={setShowColorMenu}
+                  showColorMenu={showColorMenu}
+                  setColorIdx={setColorIdx}
+                  setFormData={setFormData}
+                />
               </div>
 
               {/* Buttons for navigation */}

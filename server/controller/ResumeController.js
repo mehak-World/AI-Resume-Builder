@@ -114,6 +114,21 @@ const updateResume = async (req, res) => {
   }
 };
 
+const updateTitle = async (req, res) => {
+  try{
+    const {resume_id} = req.params;
+    const {data} = req.body;
+    const title = data.title;
+
+    const newRes = await Resume.findByIdAndUpdate(resume_id, {title: title}, {new: true});
+    res.status(200).send(newRes);
+  }
+  catch(err){
+    res.status(400).send("Could not update the title");
+  }
+
+}
+
 
 const deleteResume = async (req, res) => {
   try {
@@ -142,4 +157,4 @@ const getResumeById = async (req, res) => {
 }
 
 
-module.exports = { createResume, updateResume, getAllResumes, deleteResume, getResumeById };
+module.exports = { createResume, updateResume, getAllResumes, deleteResume, getResumeById, updateTitle };

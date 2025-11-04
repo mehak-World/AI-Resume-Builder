@@ -41,9 +41,7 @@ const Dashboard = () => {
   // Delete resume
   const deleteResume = async (id) => {
     // Remove the resume from the db
-    const response = await axios.post(
-      `${url}/resumes/${user.id}/${id}/delete`
-    );
+    const response = await axios.post(`${url}/resumes/${user.id}/${id}/delete`);
     // If resume successfully deleted from the database, then update the UI
     if (response) {
       setAllResumes(allResumes.filter((resume) => resume._id !== id));
@@ -52,30 +50,33 @@ const Dashboard = () => {
 
   // Edit resume
   const editResume = async (e) => {
-    e.preventDefault();
-    const response = await axios.post(
-      `${url}/resumes/${user.id}/${editResumeId}`,
-      { data: { title } }
-    );
+    try {
+      e.preventDefault();
+      const response = await axios.post(
+        `${url}/resumes/${user.id}/${editResumeId}/updateTitle`,
+        { data: { title } }
+      );
 
-    const new_resume = response?.data;
-    console.log(new_resume);
+      const new_resume = response?.data;
+      console.log(new_resume);
 
-    setAllResumes((prev) =>
-      prev.map((resume) => (resume._id === editResumeId ? new_resume : resume))
-    );
-
-    setTitle(""); // optional: clear input
-    setShowEditResumeForm(false);
+      setAllResumes((prev) =>
+        prev.map((resume) =>
+          resume._id === editResumeId ? new_resume : resume
+        )
+      );
+    } catch (err) {
+      console.log(err?.message);
+    } finally {
+      setTitle("");
+      setShowEditResumeForm(false);
+    }
   };
 
   // Function to create resume
   const createResume = async (e) => {
     e.preventDefault();
-    const response = await axios.post(
-      `${url}/resumes/${user.id}`,
-      { title }
-    );
+    const response = await axios.post(`${url}/resumes/${user.id}`, { title });
     const new_resume = response?.data;
     console.log(new_resume);
 
@@ -172,6 +173,7 @@ const Dashboard = () => {
           title={title}
           setShowEditResumeForm={setShowEditResumeForm}
           editResume={editResume}
+          editResumeId={editResumeId}
         />
       )}
     </div>
